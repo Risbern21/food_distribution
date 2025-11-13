@@ -1,0 +1,51 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Donation } from '@/lib/types';
+import { Clock, Package } from 'lucide-react';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
+
+interface DonationCardProps {
+  donation: Donation;
+  onUpdate: () => void;
+}
+
+const DonationCard = ({ donation }: DonationCardProps) => {
+  const isExpired = new Date(donation.expiry_time) < new Date();
+  const expiresIn = dayjs(donation.expiry_time).fromNow();
+
+  return (
+    <Card className={isExpired ? 'opacity-60' : ''}>
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <CardTitle className="text-lg">{donation.title}</CardTitle>
+          {isExpired ? (
+            <Badge variant="secondary">Expired</Badge>
+          ) : (
+            <Badge className="bg-primary text-primary-foreground">Active</Badge>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <p className="text-sm text-muted-foreground">{donation.description}</p>
+        <div className="flex items-center gap-2 text-sm">
+          <Package className="h-4 w-4 text-muted-foreground" />
+          <span className="text-foreground">{donation.quantity} items</span>
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <Clock className="h-4 w-4 text-muted-foreground" />
+          <span className={isExpired ? 'text-destructive' : 'text-foreground'}>
+            Expires {expiresIn}
+          </span>
+        </div>
+        <div className="text-xs text-muted-foreground">
+          Pickup: {dayjs(donation.pickup_time).format('MMM D, h:mm A')}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default DonationCard;
