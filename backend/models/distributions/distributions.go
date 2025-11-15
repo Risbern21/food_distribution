@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"food/internal/database"
+	"food/models/donations"
 
 	"github.com/google/uuid"
 )
@@ -36,6 +37,14 @@ func (d *Distributions) Create() error {
 		VALUES (:donation_id,:recipient_id,:delivery_status,:delivered_at,:pickup_confirmed)
 		RETURNING distribution_id;
 	`
+
+	donation := donations.New()
+	donation.DonationID = d.DonationID
+
+	if err := donation.UpdateAvailable(); err != nil {
+		return err
+	}
+
 	row, err := database.Client().NamedQuery(query, d)
 	if err != nil {
 		return err
@@ -93,13 +102,29 @@ func (d *Distributions) Delete() error {
 	return nil
 }
 
+type StatDistributions struct {
+	DistributionID  uuid.UUID `json:"distribution_id" db:"distribution_id"`
+	DonationID      uuid.UUID `json:"donation_id" db:"donation_id"`
+	RecipientID     uuid.UUID `json:"recipient_id" db:"recipient_id"`
+	DeliveryStatus  Status    `json:"delivery_status" db:"delivery_status"`
+	DeliveredAt     time.Time `json:"delivered_at" db:"delivered_at"`
+	PickupConfirmed bool      `json:"pickup_confirmed" db:"pickup_confirmed"`
+	Title           string    `json:"title" db:"title"`
+	Description     string    `json:"description" db:"description"`
+	Quantity        int16     `json:"quantity" db:"quantity"`
+}
+
 type AllDistributions struct {
-	AllDistributions []Distributions
+	DonorID              uuid.UUID `db:"donor_id"`
+	RecipientID          uuid.UUID `db:"recipient_id"`
+	AllDistributions     []Distributions
+	AllStatDistributions []StatDistributions
 }
 
 func NewAllDistributions() *AllDistributions {
 	return &AllDistributions{
-		AllDistributions: []Distributions{},
+		AllDistributions:     []Distributions{},
+		AllStatDistributions: []StatDistributions{},
 	}
 }
 
@@ -109,6 +134,34 @@ func (ad *AllDistributions) Get() error {
 	LIMIT 10;
 	`
 	if err := database.Client().Select(&ad.AllDistributions, query); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ad *AllDistributions) GetByDonorID() error {
+	query := `
+	SELECT d.* , fd.title ,fd.description,fd.quantity FROM distributions d
+	INNER JOIN donations fd
+	ON d.donation_id = fd.donation_id
+	WHERE fd.donor_id = $1;
+	`
+	if err := database.Client().Select(&ad.AllStatDistributions, query, ad.DonorID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ad *AllDistributions) GetByRecipientID() error {
+	query := `
+	SELECT d.* , fd.title ,fd.description,fd.quantity FROM distributions d
+	INNER JOIN donations fd
+	ON d.donation_id = fd.donation_id
+	WHERE d.recipient_id = $1;
+	`
+	if err := database.Client().Select(&ad.AllStatDistributions, query, ad.RecipientID); err != nil {
 		return err
 	}
 

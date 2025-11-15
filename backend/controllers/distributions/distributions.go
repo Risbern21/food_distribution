@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-
 	"food/models/distributions"
 
 	"github.com/gofiber/fiber/v2"
@@ -55,6 +54,47 @@ func GetAll(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(ad.AllDistributions)
+}
+
+func GetByDonorID(ctx *fiber.Ctx) error {
+	ad := distributions.NewAllDistributions()
+
+	donorID, err := uuid.Parse(ctx.Params("d_id"))
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON("inavlid recipient id")
+	}
+
+	ad.DonorID = donorID
+
+	if err := ad.GetByDonorID(); err != nil {
+		fmt.Printf("%v", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return ctx.Status(fiber.StatusNotFound).JSON("no distributions found")
+		}
+		return ctx.Status(fiber.StatusInternalServerError).JSON("internal sever error")
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(ad.AllStatDistributions)
+}
+
+func GetByRecipientID(ctx *fiber.Ctx) error {
+	ad := distributions.NewAllDistributions()
+
+	recipientID, err := uuid.Parse(ctx.Params("r_id"))
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON("inavlid recipient id")
+	}
+
+	ad.RecipientID = recipientID
+
+	if err := ad.GetByRecipientID(); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ctx.Status(fiber.StatusNotFound).JSON("no distributions found")
+		}
+		return ctx.Status(fiber.StatusInternalServerError).JSON("internal sever error")
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(ad.AllStatDistributions)
 }
 
 func Update(ctx *fiber.Ctx) error {

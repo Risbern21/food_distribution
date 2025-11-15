@@ -73,6 +73,23 @@ func GetAll(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(allDonations.AllDonations)
 }
 
+func GetAvailable(ctx *fiber.Ctx) error {
+	d := donations.NewAllDonations()
+
+	if err := d.GetAvailable(); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"message": "no available donations",
+			})
+		}
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": fmt.Sprintf("internal server error:%v", err),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(d.AllDonations)
+}
+
 func Update(ctx *fiber.Ctx) error {
 	fd := donations.New()
 

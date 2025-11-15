@@ -14,6 +14,7 @@ type Donations struct {
 	Title       string    `json:"title"           db:"title"`
 	Description string    `json:"description"     db:"description"`
 	Quantity    int16     `json:"quantity"        db:"quantity"`
+	IsAvailable bool      `json:"is_available,omitempty"    db:"is_available"`
 	PickupTime  time.Time `json:"pickup_time"     db:"pickup_time"`
 	ExpiryTime  time.Time `json:"expiry_time"     db:"expiry_time"`
 }
@@ -74,6 +75,20 @@ func (fd *Donations) Update() error {
 	return nil
 }
 
+func (fd *Donations) UpdateAvailable() error {
+	query := `
+	UPDATE donations
+	SET is_available = FALSE
+	WHERE donation_id = :donation_id;
+	`
+
+	_, err := database.Client().NamedExec(query, fd)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (fd *Donations) Delete() error {
 	query := `
 	DELETE FROM donations
@@ -104,6 +119,18 @@ func (ad *AllDonations) Get() error {
 	WHERE donor_id = $1;
 	`
 	if err := database.Client().Select(&ad.AllDonations, query, ad.DonorID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ad *AllDonations) GetAvailable() error {
+	query := `
+		SELECT * FROM donations d
+		WHERE is_available IS TRUE;
+	`
+
+	if err := database.Client().Select(&ad.AllDonations, query); err != nil {
 		return err
 	}
 	return nil

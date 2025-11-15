@@ -12,6 +12,8 @@ func DistributionsRoutes(r fiber.Router) {
 
 	distributionsRoutes.Post("/", middleware.JWTProtected, distributions.Create)
 	distributionsRoutes.Get("/all", middleware.JWTProtected, distributions.GetAll)
+	distributionsRoutes.Get("/all_donated/:d_id", middleware.JWTProtected, distributions.GetByDonorID)
+	distributionsRoutes.Get("/all_received/:r_id", middleware.JWTProtected, distributions.GetByRecipientID)
 	distributionsRoutes.Get("/:d_id", middleware.JWTProtected, distributions.Get)
 	distributionsRoutes.Put("/:d_id", middleware.JWTProtected, distributions.Update)
 	distributionsRoutes.Delete("/:d_id", middleware.JWTProtected, distributions.Delete)
