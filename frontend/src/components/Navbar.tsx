@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
-import { Utensils, LogOut } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { Utensils, LogOut, User } from "lucide-react";
 
 export const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -20,8 +20,14 @@ export const Navbar = () => {
               <Link to="/dashboard">
                 <Button variant="ghost">Dashboard</Button>
               </Link>
-              <span className="text-sm text-muted-foreground hidden sm:inline">
-                {user?.username}
+              <Link to="/stats">
+                <Button variant="ghost">{user?.user_type === "donor" ? "My Donations" : "My Orders"}</Button>
+              </Link>
+              <span className="text-sm text-muted-foreground flex flex-row items-center gap-1">
+                <span className="border-2 border-green-400 rounded-full p-2">
+                  <User />
+                </span>
+                <span>{user?.username}</span>
               </span>
               <Button onClick={logout} variant="outline" size="sm">
                 <LogOut className="h-4 w-4 mr-2" />

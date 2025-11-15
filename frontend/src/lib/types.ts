@@ -1,4 +1,4 @@
-export type UserType = 'donor' | 'recipient' | 'admin';
+export type UserType = "donor" | "recipient" | "admin";
 
 export interface User {
   user_id: string;
@@ -19,7 +19,7 @@ export interface Donation {
   expiry_time: string;
 }
 
-export type DeliveryStatus = 'pending' | 'allocated' | 'delivered';
+export type DeliveryStatus = "pending" | "allocated" | "delivered";
 
 export interface Distribution {
   distribution_id: string;
@@ -42,4 +42,16 @@ export interface Feedback {
 export interface AuthResponse {
   token: string;
   user: User;
+}
+
+export interface StatDistribution {
+  distribution_id: string;
+  donation_id: string;
+  recipient_id: string;
+  delivery_status: DeliveryStatus;
+  delivered_at?: string;
+  pickup_confirmed: boolean;
+  title: string;
+  description: string;
+  quantity: number;
 }

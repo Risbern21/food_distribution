@@ -18,7 +18,7 @@ const RecipientDashboard = () => {
 
   const fetchAvailableDonations = async () => {
     try {
-      const response = await api.get('/donations/available');
+      const response = await api.get('/donations/all/available');
       setDonations(response.data);
     } catch (error) {
       toast.error('Failed to load available donations');
