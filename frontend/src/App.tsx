@@ -7,8 +7,6 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
-import Orders from "./components/stats/Orders";
-import Donations from "./components/stats/Donations";
 import Stats from "./pages/Stats";
 
 const queryClient = new QueryClient();

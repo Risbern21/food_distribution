@@ -15,6 +15,7 @@ export interface Donation {
   title: string;
   description: string;
   quantity: number;
+  is_available: boolean;
   pickup_time: string;
   expiry_time: string;
 }
@@ -47,6 +48,7 @@ export interface AuthResponse {
 export interface StatDistribution {
   distribution_id: string;
   donation_id: string;
+  donor_id: string;
   recipient_id: string;
   delivery_status: DeliveryStatus;
   delivered_at?: string;

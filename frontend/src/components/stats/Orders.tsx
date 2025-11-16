@@ -40,7 +40,7 @@ const Orders = () => {
       {/* Orders List */}
       <div>
         <h2 className="text-xl font-semibold mb-4 text-foreground">
-          Your Donations
+          Your Orders
         </h2>
         {isLoading ? (
           <div className="text-center py-12 text-muted-foreground">

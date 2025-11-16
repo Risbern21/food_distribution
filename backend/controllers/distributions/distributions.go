@@ -109,6 +109,7 @@ func Update(ctx *fiber.Ctx) error {
 		if errors.Is(err, sql.ErrNoRows) {
 			return ctx.Status(fiber.StatusNotFound).JSON("distribution not found")
 		}
+		fmt.Printf("%v", err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON("internal server error")
 	}
 

@@ -15,11 +15,13 @@ dayjs.extend(relativeTime);
 interface AvailableDonationCardProps {
   donation: Donation;
   onRequest: () => void;
+  onSuccess: () => void;
 }
 
 const AvailableDonationCard = ({
   donation,
   onRequest,
+  onSuccess
 }: AvailableDonationCardProps) => {
   const expiresIn = dayjs(donation.expiry_time).fromNow();
   const hoursUntilExpiry =
@@ -36,6 +38,7 @@ const AvailableDonationCard = ({
       await api.post("/distributions", Data);
       toast.success("Request sent successfully!");
       onRequest();
+      onSuccess();
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Failed to request donation"
@@ -44,7 +47,7 @@ const AvailableDonationCard = ({
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card className="hover:shadow-xl transition-shadow">
       <CardHeader>
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg">{donation.title}</CardTitle>
@@ -56,7 +59,7 @@ const AvailableDonationCard = ({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">{donation.description}</p>
+        <p className="text-sm text-muted-foreground line-clamp-2">{donation.description}</p>
 
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-sm">
@@ -83,7 +86,7 @@ const AvailableDonationCard = ({
           </div>
         </div>
 
-        <Button onClick={handleRequest} className="w-full">
+        <Button onClick={handleRequest} className="w-full mt-auto">
           Request This Food
         </Button>
       </CardContent>

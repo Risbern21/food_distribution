@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatDistribution, User } from "@/lib/types";
-import { Package } from "lucide-react";
+import { Check, Clock, Package } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FeedbackModal from "../modals/FeedbackModal";
 import api from "@/lib/api";
+import { toast } from "sonner";
 
 dayjs.extend(relativeTime);
 
@@ -16,26 +17,65 @@ interface DistributionCardProps {
 }
 
 const DistributionCard = ({ distribution }: DistributionCardProps) => {
-  const user:User = localStorage.getItem("user")
+  const user: User = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user") || "{}")
     : null;
 
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+
+  const confirmPickup = async () => {
+    try {
+      await api.put(`/distributions/${distribution.distribution_id}`, {
+        user_id: user?.user_id,
+        delivery_status: "picked_up",
+        delivered_at: new Date().toISOString(),
+      });
+      toast.success("Request sent successfully!");
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Failed to request donation"
+      );
+    }
+  };
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg">{distribution.title}</CardTitle>
+          <div className="text-sm">
+            {user?.user_type === "donor" ? `To :reci` : `From :donor`}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground line-clamp-1">
           {distribution.description}
         </p>
-        <div className="flex items-center gap-2 text-sm">
-          <Package className="h-4 w-4 text-muted-foreground" />
-          <span className="text-foreground">{distribution.quantity} items</span>
+        <div className="flex justify-between items-center text-sm">
+          <div className="flex items-center gap-2 ">
+            <Package className="h-4 w-4 text-muted-foreground" />
+            <span className="text-foreground">
+              {distribution.quantity} items
+            </span>
+          </div>
+          <div>
+            {!distribution.pickup_confirmed ? (
+              user?.user_type === "donor" ? (
+                <Button onClick={() => confirmPickup()}>Confirm Pickup</Button>
+              ) : (
+                <div className="flex gap-1 items-center text-foreground">
+                  <span>Waiting for pickup</span>
+                  <Clock />
+                </div>
+              )
+            ) : (
+              <div className="flex gap-1 items-center text-foreground">
+                <span>Delivered</span>
+                <Check className="border rounded-full bg-green-500" />
+              </div>
+            )}
+          </div>
         </div>
         {user?.user_type === "recipient" && (
           <Button onClick={() => setFeedbackModalOpen(true)}>

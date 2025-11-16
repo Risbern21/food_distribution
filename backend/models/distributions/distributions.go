@@ -76,7 +76,7 @@ func (d *Distributions) Update() error {
 	UPDATE distributions
 	SET delivery_status=:delivery_status,
 	delivered_at = :delivered_at,
-	pickup_confirmed = :pickup_confirmed
+	pickup_confirmed = TRUE
 	WHERE distribution_id = :distribution_id;
 	`
 
@@ -105,6 +105,7 @@ func (d *Distributions) Delete() error {
 type StatDistributions struct {
 	DistributionID  uuid.UUID `json:"distribution_id" db:"distribution_id"`
 	DonationID      uuid.UUID `json:"donation_id" db:"donation_id"`
+	DonorID         uuid.UUID `json:"donor_id" db:"donor_id"`
 	RecipientID     uuid.UUID `json:"recipient_id" db:"recipient_id"`
 	DeliveryStatus  Status    `json:"delivery_status" db:"delivery_status"`
 	DeliveredAt     time.Time `json:"delivered_at" db:"delivered_at"`
@@ -142,7 +143,7 @@ func (ad *AllDistributions) Get() error {
 
 func (ad *AllDistributions) GetByDonorID() error {
 	query := `
-	SELECT d.* , fd.title ,fd.description,fd.quantity FROM distributions d
+	SELECT d.* , fd.donor_id,fd.title ,fd.description,fd.quantity FROM distributions d
 	INNER JOIN donations fd
 	ON d.donation_id = fd.donation_id
 	WHERE fd.donor_id = $1;
@@ -156,7 +157,7 @@ func (ad *AllDistributions) GetByDonorID() error {
 
 func (ad *AllDistributions) GetByRecipientID() error {
 	query := `
-	SELECT d.* , fd.title ,fd.description,fd.quantity FROM distributions d
+	SELECT d.* , fd.donor_id,fd.title ,fd.description,fd.quantity FROM distributions d
 	INNER JOIN donations fd
 	ON d.donation_id = fd.donation_id
 	WHERE d.recipient_id = $1;

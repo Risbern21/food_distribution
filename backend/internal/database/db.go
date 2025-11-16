@@ -1,6 +1,7 @@
 package database
 
 import (
+	"food/utils"
 	"log"
 	"os"
 
@@ -57,6 +58,14 @@ const schema = `
 	); 
 `
 
+const adminQuery = `INSERT INTO users (username,email,hashed_password,user_type)
+										SELECT $1,$2,$3,$4
+										WHERE NOT EXISTS (
+										SELECT 1 FROM users WHERE username = $1
+										AND email = $2
+										AND user_type = $4
+										);`
+
 var db *sqlx.DB
 
 func Client() *sqlx.DB {
@@ -82,5 +91,14 @@ func Connect() {
 	}
 
 	db.MustExec(schema)
+
+	hashedPass, err := utils.GetPasswordHash("admin123")
+	if err != nil {
+		log.Fatalf("unable to generate password hash")
+	}
+	_, err = db.Exec(adminQuery, "admin", "admin@gmail.com", hashedPass, "admin")
+	if err != nil {
+		log.Fatalf("unable to create admin user")
+	}
 	log.Println("successfully connected to the database")
 }

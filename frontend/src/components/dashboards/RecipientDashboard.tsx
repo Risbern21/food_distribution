@@ -97,6 +97,7 @@ const RecipientDashboard = () => {
                 key={donation.donation_id} 
                 donation={donation}
                 onRequest={fetchAvailableDonations}
+                onSuccess={fetchAvailableDonations}
               />
             ))}
           </div>

@@ -1,7 +1,4 @@
 import { Navbar } from "@/components/Navbar";
-import DonorDashboard from "@/components/dashboards/DonorDashboard";
-import RecipientDashboard from "@/components/dashboards/RecipientDashboard";
-import AdminDashboard from "@/components/dashboards/AdminDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import Donations from "@/components/stats/Donations";
