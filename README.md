@@ -12,18 +12,18 @@ This project includes:
 ---
 ## 🚀 Getting Started
 
-## create a .env file and put the following env vars:
+## rename the ".env.example" file to ".env" in the frontend folder and it should contain:
 VITE_API_URL=http://localhost:42069/api/v1/
 
 ---
 
-## create a .env file in the backend folder and put the following env vars:
+## rename the ".env.example" file to ".env" in the backend folder and it should contain:
 DSN=<your_postgres_dsn>
 JWT_SECRET=<your_jwt_secret>
 
 ---
 
-### 🔧 Backend Setup (Go Fiber)
+### 🔧 Setup
 
 ```bash
 git clone https://github.com/Risbern21/food_distribution.git
