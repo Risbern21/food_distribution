@@ -89,13 +89,36 @@ func (d *Distributions) Update() error {
 }
 
 func (d *Distributions) Delete() error {
-	query := `
+	fetchDonationIDQuery := `
+	SELECT donation_id FROM distributions
+	WHERE distribution_id= $1;
+	`
+
+	deleteQuery := `
 	DELETE FROM distributions
 	WHERE distribution_id = :distribution_id;
 	`
 
-	_, err := database.Client().NamedQuery(query, d)
-	if err != nil {
+	updateDonationQuery := `
+	UPDATE donations
+	SET is_available = TRUE
+	WHERE donation_id = :donation_id;
+	`
+
+	tx := database.Client().MustBegin()
+	if err := tx.Get(&d.DonationID, fetchDonationIDQuery, d.DistributionID); err != nil {
+		return err
+	}
+
+	if _, err := tx.NamedExec(deleteQuery, d); err != nil {
+		_ = tx.Rollback()
+		return err
+	}
+	if _, err := tx.NamedExec(updateDonationQuery, d); err != nil {
+		_ = tx.Rollback()
+		return err
+	}
+	if err := tx.Commit(); err != nil {
 		return err
 	}
 

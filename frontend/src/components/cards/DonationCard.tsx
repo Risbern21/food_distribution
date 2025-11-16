@@ -51,16 +51,22 @@ const DonationCard = ({ donation, onUpdate }: DonationCardProps) => {
           <span>
             Pickup By: {dayjs(donation.pickup_time).format("MMM D, h:mm A")}
           </span>
-          <Button variant="destructive" onClick={()=>setShowDeleteModal(true)}>Remove Donation</Button>
+          {donation.is_available && (
+            <Button
+              variant="destructive"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              Remove Donation
+            </Button>
+          )}
         </div>
       </CardContent>
-      {showDeleteModal && (
+      {showDeleteModal && donation.is_available && (
         <DeleteDonationModal
           donationId={donation.donation_id}
           isOpen={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
-          onDelete={onUpdate
-          }
+          onDelete={onUpdate}
         />
       )}
     </Card>

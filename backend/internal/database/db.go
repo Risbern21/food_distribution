@@ -48,13 +48,15 @@ const schema = `
 	CREATE TABLE IF NOT EXISTS feedbacks (
 		feedback_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 		distribution_id UUID NOT NULL,
-		user_id UUID NOT NULL,
+		recipient_id UUID NOT NULL,
+		donor_id UUID NOT NULL,
 		rating INT,
 		comments TEXT,
 		created_at TIMESTAMPTZ,
 
 		FOREIGN KEY (distribution_id) REFERENCES distributions(distribution_id) ON DELETE CASCADE,
-		FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+		FOREIGN KEY (recipient_id) REFERENCES users(user_id) ON DELETE CASCADE,
+		FOREIGN KEY (donor_id) REFERENCES users(user_id) ON DELETE CASCADE
 	); 
 `
 

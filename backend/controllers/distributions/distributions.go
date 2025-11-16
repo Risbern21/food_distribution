@@ -126,6 +126,7 @@ func Delete(ctx *fiber.Ctx) error {
 	distribution.DistributionID = distributionID
 
 	if err := distribution.Delete(); err != nil {
+		fmt.Printf(err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON("internal server error")
 	}
 

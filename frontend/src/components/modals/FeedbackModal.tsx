@@ -18,7 +18,8 @@ interface FeedbackModalProps {
   onClose: () => void;
   distributionId: string;
   donationTitle: string;
-  userId: string;
+  recipientId: string;
+  donorId: string;
   // onSuccess?: () => void;
 }
 
@@ -27,7 +28,8 @@ const FeedbackModal = ({
   onClose,
   distributionId,
   donationTitle,
-  userId,
+  recipientId,
+  donorId,
   // onSuccess,
 }: FeedbackModalProps) => {
   const [rating, setRating] = useState<number>(5);
@@ -44,7 +46,8 @@ const FeedbackModal = ({
     try {
       await api.post(`/feedbacks`, {
         distribution_id: distributionId,
-        user_id: userId,
+        recipient_id: recipientId,
+        donor_id: donorId,
         rating: rating,
         comments: comments,
         createdAt: new Date().toISOString(),

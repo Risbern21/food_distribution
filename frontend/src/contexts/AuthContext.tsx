@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { User } from '@/lib/types';
 import api from '@/lib/api';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
@@ -16,14 +17,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setTokenState] = useState<string | null>(null);
-
+  const navigate = useNavigate();
+  
   const fetchUserData = useCallback(async () => {
     const currentToken = localStorage.getItem('auth_token');
     if (!currentToken) return;
 
     const userEmail = localStorage.getItem('user_email');
     if (!userEmail) {
-      console.error('No email found for /auth/me request');
       return;
     }
 
@@ -36,7 +37,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       // Failed to fetch user data, but we still have a token
-      console.error('Failed to fetch user data:', error);
     }
   }, []);
 
@@ -59,7 +59,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch (error) {
         // Invalid JSON in localStorage, clear it
-        console.error('Failed to parse stored user:', error);
         localStorage.removeItem('user');
       }
     } else if (storedToken && !storedUser) {
@@ -88,6 +87,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('user_email');
     setUser(null);
     setTokenState(null);
+
+    navigate('/');
   }, []);
 
   // User is authenticated if we have a token (even if user data is not yet loaded)

@@ -32,8 +32,15 @@ export const Navbar = () => {
                   {user?.user_type === "donor" ? "My Donations" : "My Orders"}
                 </Button>
               </Link>
-              <span className="text-sm text-muted-foreground flex flex-row items-center gap-1 cursor-pointer"
-              onClick={() => setAccountSettingsOpen(true)}>
+              {user?.user_type === "donor" && (
+                <Link to="/feedbacks">
+                  <Button variant="ghost">Your Feedbacks</Button>
+                </Link>
+              )}
+              <span
+                className="text-sm text-muted-foreground flex flex-row items-center gap-1 cursor-pointer"
+                onClick={() => setAccountSettingsOpen(true)}
+              >
                 <span className="border-2 border-green-400 rounded-full p-2">
                   <User />
                 </span>

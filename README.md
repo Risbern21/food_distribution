@@ -37,7 +37,7 @@ cd ..
 #setup the backend
 cd backend
 go mod tidy
-go run main.go
+go run cmd/main.go
 ```
 ---
 

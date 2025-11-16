@@ -8,6 +8,8 @@ import { useState } from "react";
 import FeedbackModal from "../modals/FeedbackModal";
 import api from "@/lib/api";
 import { toast } from "sonner";
+import DeleteModal from "../modals/DeleteDonationModal";
+import CancelOrderModal from "../modals/CancelOrderModal";
 
 dayjs.extend(relativeTime);
 
@@ -16,12 +18,16 @@ interface DistributionCardProps {
   onUpdate: () => void;
 }
 
-const DistributionCard = ({ distribution }: DistributionCardProps) => {
+const DistributionCard = ({
+  distribution,
+  onUpdate,
+}: DistributionCardProps) => {
   const user: User = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user") || "{}")
     : null;
 
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   const confirmPickup = async () => {
     try {
@@ -31,6 +37,7 @@ const DistributionCard = ({ distribution }: DistributionCardProps) => {
         delivered_at: new Date().toISOString(),
       });
       toast.success("Request sent successfully!");
+      onUpdate();
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Failed to request donation"
@@ -77,18 +84,30 @@ const DistributionCard = ({ distribution }: DistributionCardProps) => {
             )}
           </div>
         </div>
-        {user?.user_type === "recipient" && (
+        {user?.user_type === "recipient" ? distribution.pickup_confirmed ? (
           <Button onClick={() => setFeedbackModalOpen(true)}>
             Give Feedback
           </Button>
-        )}
+        ) : (
+          <Button onClick={() => setShowCancelModal(true)}>
+            Request Cancellation
+          </Button>
+        ):null}
       </CardContent>
       <FeedbackModal
         isOpen={feedbackModalOpen}
         onClose={() => setFeedbackModalOpen(false)}
         distributionId={distribution.distribution_id}
-        userId={user?.user_id}
+        recipientId={user?.user_id}
+        donorId={distribution.donor_id}
         donationTitle={distribution.title}
+      />
+      <CancelOrderModal
+        distributionId={distribution.distribution_id}
+        isOpen={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        donationTitle={distribution.title}
+        onUpdate={onUpdate}
       />
     </Card>
   );

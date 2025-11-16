@@ -35,7 +35,6 @@ const DonationForm = ({ onClose, onSuccess }: DonationFormProps) => {
     formData.expiry_time = formData.expiry_time + ":00Z";
 
     try {
-      console.log(formData);
       await api.post("/donations", formData);
       toast.success("Donation created successfully!");
       onSuccess();
