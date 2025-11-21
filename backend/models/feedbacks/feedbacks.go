@@ -63,9 +63,21 @@ func (f *Feedbacks) Get() error {
 	return nil
 }
 
+type CustomFeedbacks struct {
+	FeedbackID     uuid.UUID `json:"feedback_id" db:"feedback_id"`
+	DistributionID uuid.UUID `json:"distribution_id" db:"distribution_id"`
+	RecipientID    uuid.UUID `json:"recipient_id" db:"recipient_id"`
+	DonorID        uuid.UUID `json:"donor_id" db:"donor_id"`
+	Rating         Rating    `json:"rating" db:"rating"`
+	Comments       string    `json:"comments" db:"comments"`
+	CreatedAt      time.Time `json:"created_at" db:"created_at"`
+	DonationTitle  string    `json:"donation_title" db:"title"`
+	RecipientEmail string    `json:"recipient_email" db:"email"`
+}
+
 type AllFeedbacks struct {
 	DonorID      uuid.UUID `db:"donor_id"`
-	AllFeedbacks []Feedbacks
+	AllFeedbacks []CustomFeedbacks
 }
 
 func NewAllFeedbacks() *AllFeedbacks {
@@ -74,8 +86,14 @@ func NewAllFeedbacks() *AllFeedbacks {
 
 func (af *AllFeedbacks) Get() error {
 	query := `
-		SELECT * FROM feedbacks f
-		WHERE f.donor_id = $1;
+		select f.*,u.email,dn.title from feedbacks f
+	  inner join distributions d
+	  on f.distribution_id = d.distribution_id
+	  inner join donations dn
+		on d.donation_id = dn.donation_id
+		inner join users u 
+		on f.recipient_id = u.user_id 
+		where f.donor_id = $1;
 	`
 
 	if err := database.Client().Select(&af.AllFeedbacks, query, af.DonorID); err != nil {

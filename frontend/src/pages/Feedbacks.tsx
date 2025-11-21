@@ -6,8 +6,13 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Star, MessageCircle } from "lucide-react";
 
+interface customFeedback extends Feedback {
+  donation_title: string;
+  recipient_email: string;
+}
+
 const Feedbacks = () => {
-  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [feedbacks, setFeedbacks] = useState<customFeedback[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user")!)
@@ -70,10 +75,10 @@ const Feedbacks = () => {
                     <div className="flex items-start justify-between">
                       <div>
                         <CardTitle className="text-lg">
-                          { "Food Donation"}
+                          {feedback.donation_title}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground mt-1">
-                          { "Anonymous"}
+                          By: {feedback.recipient_email}
                         </p>
                       </div>
                       <div className="flex gap-1">
@@ -83,11 +88,11 @@ const Feedbacks = () => {
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <p className="text-foreground">{feedback.comments}</p>
-                    {feedback.created_at && (
+                    {/* {feedback.created_at && (
                       <p className="text-xs text-muted-foreground">
-                        {new Date(feedback.created_at).toLocaleDateString()}
+                        {feedback.created_at}
                       </p>
-                    )}
+                    )} */}
                   </CardContent>
                 </Card>
               ))}

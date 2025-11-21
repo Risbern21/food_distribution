@@ -129,6 +129,8 @@ type StatDistributions struct {
 	DistributionID  uuid.UUID `json:"distribution_id" db:"distribution_id"`
 	DonationID      uuid.UUID `json:"donation_id" db:"donation_id"`
 	DonorID         uuid.UUID `json:"donor_id" db:"donor_id"`
+	DonorEmail      string    `json:"donor_email" db:"donor_email"`
+	RecipientEmail  string    `json:"recipient_email" db:"recipient_email"`
 	RecipientID     uuid.UUID `json:"recipient_id" db:"recipient_id"`
 	DeliveryStatus  Status    `json:"delivery_status" db:"delivery_status"`
 	DeliveredAt     time.Time `json:"delivered_at" db:"delivered_at"`
@@ -166,9 +168,11 @@ func (ad *AllDistributions) Get() error {
 
 func (ad *AllDistributions) GetByDonorID() error {
 	query := `
-	SELECT d.* , fd.donor_id,fd.title ,fd.description,fd.quantity FROM distributions d
+	SELECT d.* ,u.email AS recipient_email, fd.donor_id,fd.title ,fd.description,fd.quantity FROM distributions d
 	INNER JOIN donations fd
 	ON d.donation_id = fd.donation_id
+	INNER JOIN users u
+	ON d.recipient_id = u.user_id
 	WHERE fd.donor_id = $1;
 	`
 	if err := database.Client().Select(&ad.AllStatDistributions, query, ad.DonorID); err != nil {
@@ -180,9 +184,11 @@ func (ad *AllDistributions) GetByDonorID() error {
 
 func (ad *AllDistributions) GetByRecipientID() error {
 	query := `
-	SELECT d.* , fd.donor_id,fd.title ,fd.description,fd.quantity FROM distributions d
+	SELECT d.* ,u.email AS donor_email ,fd.donor_id,fd.title ,fd.description,fd.quantity FROM distributions d
 	INNER JOIN donations fd
 	ON d.donation_id = fd.donation_id
+	INNER JOIN users u
+	ON fd.donor_id = u.user_id
 	WHERE d.recipient_id = $1;
 	`
 	if err := database.Client().Select(&ad.AllStatDistributions, query, ad.RecipientID); err != nil {

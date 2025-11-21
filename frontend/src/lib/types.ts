@@ -49,7 +49,9 @@ export interface StatDistribution {
   distribution_id: string;
   donation_id: string;
   donor_id: string;
+  donor_email:string;
   recipient_id: string;
+  recipient_email:string;
   delivery_status: DeliveryStatus;
   delivered_at?: string;
   pickup_confirmed: boolean;

@@ -30,7 +30,6 @@ const FeedbackModal = ({
   donationTitle,
   recipientId,
   donorId,
-  // onSuccess,
 }: FeedbackModalProps) => {
   const [rating, setRating] = useState<number>(5);
   const [comments, setComments] = useState("");

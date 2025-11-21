@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("unable to load env:%v", err)
+		log.Printf("unable to load env:%v,using docker injected vars", err)
 	}
 
 	app.Setup()

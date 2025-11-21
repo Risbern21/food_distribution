@@ -1,0 +1,38 @@
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: food_backend
+    ports:
+      - "42069:42069"
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: food_frontend
+    ports:
+      - "8080:80"
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    restart: unless-stopped
+    
+  db:
+    image: postgres:16
+    container_name: food_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: "postgres"
+    volumes:
+     - "pgdata:/var/lib/postgresql/data"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

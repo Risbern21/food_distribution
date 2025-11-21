@@ -8,7 +8,6 @@ import { useState } from "react";
 import FeedbackModal from "../modals/FeedbackModal";
 import api from "@/lib/api";
 import { toast } from "sonner";
-import DeleteModal from "../modals/DeleteDonationModal";
 import CancelOrderModal from "../modals/CancelOrderModal";
 
 dayjs.extend(relativeTime);
@@ -51,7 +50,7 @@ const DistributionCard = ({
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg">{distribution.title}</CardTitle>
           <div className="text-sm">
-            {user?.user_type === "donor" ? `To :reci` : `From :donor`}
+            {user?.user_type === "donor" ? `To :${distribution.recipient_email}` : `From: ${distribution.donor_email}`}
           </div>
         </div>
       </CardHeader>
