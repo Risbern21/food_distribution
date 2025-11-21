@@ -12,7 +12,7 @@ interface customFeedback extends Feedback {
 }
 
 const Feedbacks = () => {
-  const [feedbacks, setFeedbacks] = useState<customFeedback[]>([]);
+  const [feedbacks, setFeedbacks] = useState<customFeedback[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user")!)
@@ -60,7 +60,7 @@ const Feedbacks = () => {
             <div className="text-center py-12 text-muted-foreground">
               Loading feedbacks...
             </div>
-          ) : feedbacks.length === 0 ? (
+          ) : !feedbacks || feedbacks.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
                 <MessageCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4 opacity-50" />
@@ -69,7 +69,7 @@ const Feedbacks = () => {
             </Card>
           ) : (
             <div className="space-y-4">
-              {feedbacks.map((feedback) => (
+              {feedbacks?.map((feedback) => (
                 <Card key={feedback.feedback_id}>
                   <CardHeader>
                     <div className="flex items-start justify-between">

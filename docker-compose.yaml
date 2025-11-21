@@ -1,8 +1,6 @@
 services:
   backend:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile
+    image: risbernfernandes/food_backend:latest
     container_name: food_backend
     ports:
       - "42069:42069"
@@ -11,9 +9,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: risbernfernandes/food_frontend:latest
     container_name: food_frontend
     ports:
       - "8080:80"
