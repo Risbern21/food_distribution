@@ -14,6 +14,7 @@ type Donations struct {
 	Title       string    `json:"title"           db:"title"`
 	Description string    `json:"description"     db:"description"`
 	Quantity    int16     `json:"quantity"        db:"quantity"`
+	Units       string    `json:"units"           db:"units"`
 	IsAvailable bool      `json:"is_available,omitempty"    db:"is_available"`
 	PickupTime  time.Time `json:"pickup_time"     db:"pickup_time"`
 	ExpiryTime  time.Time `json:"expiry_time"     db:"expiry_time"`
@@ -25,8 +26,8 @@ func New() *Donations {
 
 func (fd *Donations) Create() error {
 	query := `
-		INSERT INTO donations (donor_id,title,description,quantity,pickup_time,expiry_time)
-		VALUES (:donor_id,:title,:description,:quantity,:pickup_time,:expiry_time) 
+		INSERT INTO donations (donor_id,title,description,quantity,units,pickup_time,expiry_time)
+	VALUES (:donor_id,:title,:description,:quantity,:units,:pickup_time,:expiry_time) 
 		RETURNING donation_id;
 	`
 	row, err := database.Client().NamedQuery(query, fd)

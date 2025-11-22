@@ -8,10 +8,26 @@ import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DonationFormProps {
   onClose: () => void;
   onSuccess: () => void;
+}
+
+enum UnitOptions {
+  Pieces = "pieces",
+  Kilograms = "kilograms",
+  Grams = "grams",
+  Lbs = "lbs",
+  Ounces = "ounces",
+  Liters = "liters",
 }
 
 const DonationForm = ({ onClose, onSuccess }: DonationFormProps) => {
@@ -22,6 +38,7 @@ const DonationForm = ({ onClose, onSuccess }: DonationFormProps) => {
     description: "",
     donor_id: "",
     quantity: 1,
+    units: UnitOptions.Pieces,
     pickup_time: "",
     expiry_time: "",
   });
@@ -80,21 +97,43 @@ const DonationForm = ({ onClose, onSuccess }: DonationFormProps) => {
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="quantity">Quantity</Label>
-              <Input
-                id="quantity"
-                type="number"
-                min="1"
-                value={formData.quantity}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    quantity: parseInt(e.target.value),
-                  })
-                }
-                required
-              />
+            <div className="flex gap-2">
+              <div className="space-y-2">
+                <Label htmlFor="quantity">Quantity</Label>
+                <Input
+                  id="quantity"
+                  type="number"
+                  min="1"
+                  value={formData.quantity}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      quantity: parseInt(e.target.value),
+                    })
+                  }
+                  required
+                />
+              </div>
+              <div className="space-y-2 flex-1">
+                <Label htmlFor="units">Units</Label>
+                <Select
+                  defaultValue={formData.units}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, units: value as UnitOptions })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(UnitOptions).map((unit) => (
+                      <SelectItem key={unit} value={unit}>
+                        {unit}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="pickup_time">Pickup Time</Label>

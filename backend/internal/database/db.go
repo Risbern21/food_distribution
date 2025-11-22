@@ -26,6 +26,7 @@ const schema = `
 		title TEXT NOT NULL,
 		description TEXT,
 		quantity INT,
+	  units TEXT,
 		is_available BOOLEAN DEFAULT TRUE,
 		pickup_time TIMESTAMPTZ,
 		expiry_time TIMESTAMPTZ,

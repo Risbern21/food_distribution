@@ -138,6 +138,7 @@ type StatDistributions struct {
 	Title           string    `json:"title" db:"title"`
 	Description     string    `json:"description" db:"description"`
 	Quantity        int16     `json:"quantity" db:"quantity"`
+	Units           string    `json:"units" db:"units"`
 }
 
 type AllDistributions struct {
@@ -168,7 +169,7 @@ func (ad *AllDistributions) Get() error {
 
 func (ad *AllDistributions) GetByDonorID() error {
 	query := `
-	SELECT d.* ,u.email AS recipient_email, fd.donor_id,fd.title ,fd.description,fd.quantity FROM distributions d
+	SELECT d.* ,u.email AS recipient_email, fd.donor_id,fd.title ,fd.description,fd.quantity,fd.units FROM distributions d
 	INNER JOIN donations fd
 	ON d.donation_id = fd.donation_id
 	INNER JOIN users u
@@ -184,7 +185,7 @@ func (ad *AllDistributions) GetByDonorID() error {
 
 func (ad *AllDistributions) GetByRecipientID() error {
 	query := `
-	SELECT d.* ,u.email AS donor_email ,fd.donor_id,fd.title ,fd.description,fd.quantity FROM distributions d
+	SELECT d.* ,u.email AS donor_email ,fd.donor_id,fd.title ,fd.description,fd.quantity,fd.units FROM distributions d
 	INNER JOIN donations fd
 	ON d.donation_id = fd.donation_id
 	INNER JOIN users u

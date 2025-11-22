@@ -15,6 +15,7 @@ export interface Donation {
   title: string;
   description: string;
   quantity: number;
+  units:string
   is_available: boolean;
   pickup_time: string;
   expiry_time: string;
@@ -58,4 +59,5 @@ export interface StatDistribution {
   title: string;
   description: string;
   quantity: number;
+  units:string
 }

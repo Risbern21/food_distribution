@@ -62,7 +62,7 @@ const DistributionCard = ({
           <div className="flex items-center gap-2 ">
             <Package className="h-4 w-4 text-muted-foreground" />
             <span className="text-foreground">
-              {distribution.quantity} items
+              {distribution.quantity} {distribution.units}
             </span>
           </div>
           <div>

@@ -39,7 +39,7 @@ const DonationCard = ({ donation, onUpdate }: DonationCardProps) => {
         </p>
         <div className="flex items-center gap-2 text-sm">
           <Package className="h-4 w-4 text-muted-foreground" />
-          <span className="text-foreground">{donation.quantity} items</span>
+          <span className="text-foreground">{donation.quantity} {donation.units}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Clock className="h-4 w-4 text-muted-foreground" />
