@@ -1,22 +1,30 @@
 services:
   backend:
-    image: risbernfernandes/food_backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: food_backend
     ports:
       - "42069:42069"
     env_file:
       - ./backend/.env
+    networks:
+      - food-network
     restart: unless-stopped
 
   frontend:
-    image: risbernfernandes/food_frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: food_frontend
     ports:
       - "8080:80"
-    env_file:
-      - ./frontend/.env
+    environment:
+      - VITE_API_URL=http://backend:42069/api/v1
     depends_on:
       - backend
+    networks:
+      - food-network
     restart: unless-stopped
     
   db:
@@ -26,9 +34,15 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: "postgres"
+    networks:
+      - food-network
     volumes:
      - "pgdata:/var/lib/postgresql/data"
     restart: unless-stopped
 
 volumes:
   pgdata:
+
+networks:
+  food-network:
+    driver: bridge
