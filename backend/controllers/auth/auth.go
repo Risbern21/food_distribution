@@ -23,6 +23,17 @@ func Create(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON("invalid request body")
 	}
 
+	dbUser := users.New()
+	dbUser.Email = user.Email
+	if err = dbUser.GetByEmail(); err == nil {
+		// If no error = record found = user exists
+		return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"message": "user already exists",
+		})
+	} else if !errors.Is(err, sql.ErrNoRows) {
+		return ctx.Status(fiber.StatusInternalServerError).
+			JSON(fiber.Map{"message": "internal server error"})
+	}
 	user.HashedPassword, err = utils.GetPasswordHash(user.HashedPassword)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON("ineternal sever error")
