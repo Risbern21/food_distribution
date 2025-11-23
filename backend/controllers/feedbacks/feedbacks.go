@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	"food/models/feedbacks"
 
@@ -13,6 +14,8 @@ import (
 
 func Create(ctx *fiber.Ctx) error {
 	feedback := feedbacks.New()
+	feedback.CreatedAt = time.Now()
+
 	if err := ctx.BodyParser(feedback); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON("invalid input body")
 	}

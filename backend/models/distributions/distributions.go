@@ -14,7 +14,6 @@ type Status string
 const (
 	Delivered Status = "delivered"
 	Pending   Status = "pending"
-	Preparing Status = "preparing"
 )
 
 type Distributions struct {

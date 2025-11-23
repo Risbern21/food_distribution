@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"food/models/distributions"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -12,6 +13,7 @@ import (
 
 func Create(ctx *fiber.Ctx) error {
 	distribution := distributions.New()
+	distribution.DeliveryStatus = distributions.Pending
 
 	if err := ctx.BodyParser(distribution); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON("invalid request body")
@@ -105,11 +107,13 @@ func Update(ctx *fiber.Ctx) error {
 
 	distribution := distributions.New()
 	distribution.DistributionID = distributionID
+	distribution.DeliveryStatus = distributions.Delivered
+	distribution.DeliveredAt = time.Now()
+
 	if err := distribution.Update(); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return ctx.Status(fiber.StatusNotFound).JSON("distribution not found")
 		}
-		fmt.Printf("%v", err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON("internal server error")
 	}
 
@@ -126,7 +130,6 @@ func Delete(ctx *fiber.Ctx) error {
 	distribution.DistributionID = distributionID
 
 	if err := distribution.Delete(); err != nil {
-		fmt.Printf(err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON("internal server error")
 	}
 
